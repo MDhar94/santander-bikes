@@ -1,6 +1,6 @@
 import plotly.express as px
 
-from data_gathering.geocode_api import geocode
+from data_gathering.data_api import geocode
 
 def bikepoints_near_me(query, dataframe):
 
