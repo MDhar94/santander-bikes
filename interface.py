@@ -1,8 +1,10 @@
-from data_gathering.data_api import geocode, bikepoint_api
+from data_gathering.data_api import bikepoint_api
 from data_cleaning.clean_data import create_dataframe, clean_dataframe, add_df_columns
-from visualizing.nearby_bikes import bikepoints_near_me
 
 from params import API_KEY
+
+# Predict walking times from coords to bikepoint of choice?
+# Predict likelihood of getting a bike given time of day, day, bikepoint, etc.?
 
 def main_pipeline():
 
@@ -17,3 +19,9 @@ def main_pipeline():
 
     return df_clean
 
+
+if __name__ == '__main__':
+
+    df_clean = main_pipeline()
+
+    print(df_clean.head())
