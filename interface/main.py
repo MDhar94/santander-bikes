@@ -1,7 +1,7 @@
 from data_gathering.data_api import bikepoint_api
 from data_cleaning.clean_data import create_dataframe, clean_dataframe, add_df_columns
 
-from params import API_KEY
+from ml_logic.params import API_KEY
 
 # Predict walking times from coords to bikepoint of choice?
 # Predict likelihood of getting a bike given time of day, day, bikepoint, etc.?
