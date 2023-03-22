@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 
-# all_bikepoints = all_bikepoint_info(app_key)
-
 def create_dataframe(api_output):
 
     # Create dict to become dataframe
@@ -46,6 +44,8 @@ def clean_dataframe(dataframe):
     for col in dataframe.columns:
 
         dataframe[col].replace('', np.nan, inplace=True)
+        dataframe[col].replace('false', np.nan, inplace=True)
+        dataframe[col].replace('true', np.nan, inplace=True)
 
     dataframe.dropna(inplace=True)
 
@@ -61,14 +61,20 @@ def clean_dataframe(dataframe):
 
 def add_df_columns(dataframe):
 
+    # Number of classic bikes
     dataframe['classic_bikes'] = dataframe['number_bikes'] - dataframe['number_ebikes']
 
+    # % bikes available
     dataframe['bike_availability'] = round(
         (dataframe['number_bikes'] / dataframe['number_docks']
          ) *100, 0)
 
+    # % ebikes available
     dataframe['ebike_availability'] = round(
         (dataframe['number_ebikes'] / dataframe['number_docks']
          ) *100, 0)
+
+    # Grouped coords
+    dataframe['coords'] = dataframe.apply(lambda x: tuple((x['lat'], x['lon'])), axis=1)
 
     return dataframe
