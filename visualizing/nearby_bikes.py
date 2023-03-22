@@ -1,42 +1,43 @@
 import plotly.express as px
+import plotly.graph_objects as go
 
-from data_gathering.data_api import geocode
+from data_gathering.get_centre import get_centre
+
+from ml_logic.params import MAPBOX_TOKEN
 
 def bikepoints_near_me(query, dataframe):
 
-    free_styles = [
-    'open-street-map', 'white-bg', 'carto-positron', 'carto-darkmatter',
-    'stamen-terrain', 'stamen-toner', 'stamen-watercolor']
+    token = MAPBOX_TOKEN
 
     query += ', London'
 
-    centre_coords = geocode(query)
+    centre_coords = get_centre(query)
 
-    fig = px.scatter_mapbox(dataframe,
-                            lat='lat',
-                            lon='lon',
-                            color='bike_availability',
-                            size='number_bikes',
-                            zoom=15,
-                            center=centre_coords,
-                            color_continuous_scale=['red', 'grey', 'green'],
-                            mapbox_style=free_styles[2],
-                            width=800,
-                            height=600,
-                            labels={
-                                'number_bikes': 'Number of bikes',
-                                'bike_availability': 'Bikes available (%)',
-                                'Name': 'Bikepoint name'
-                            },
-                            hover_name='Name',
-                            hover_data={
-                                'Name': False,
-                                'number_bikes': True,
-                                'bike_availability': True,
-                                'lat': False,
-                                'lon': False
-                            })
+    fig = go.Figure(go.Scattermapbox(mode = "markers"
+                                     , lon = dataframe['lon']
+                                     , lat = dataframe['lat']
+                                     , marker=go.scattermapbox.Marker(size=dataframe['number_bikes']
+                                                                      , color=dataframe['bike_availability']
+                                                                      , colorscale=['red','grey','green'])
+                                     , showlegend=False
+                                     , hovertext=dataframe['Name']
+                                     , hoverinfo="text"
+                                     )
+                    )
 
-    fig.update_layout(coloraxis_colorbar=dict(title=""))
+    fig.add_trace(go.Scattermapbox(mode = "markers"
+                                   ,lon = [centre_coords['lon']], lat = [centre_coords['lat']]
+                                   , marker = {'size': 20, 'symbol': ["marker"]}
+                                   , text = ["You are here!"]
+                                   , textposition = "bottom right"
+                                   , name='You are here!',showlegend=False
+                                   , hoverinfo="text"))
+
+    fig.update_layout(width=800
+                      , height=600
+                      , mapbox=dict(accesstoken=token
+                                    , center=go.layout.mapbox.Center(lat=centre_coords['lat']
+                                                                     , lon=centre_coords['lon'])
+                                    , zoom=14))
 
     return fig
