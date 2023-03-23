@@ -33,9 +33,7 @@ def bikepoints_near_me(query, dataframe):
                                    , name='You are here!',showlegend=False
                                    , hoverinfo="text"))
 
-    fig.update_layout(width=800
-                      , height=600
-                      , mapbox=dict(accesstoken=token
+    fig.update_layout(mapbox=dict(accesstoken=token
                                     , center=go.layout.mapbox.Center(lat=centre_coords['lat']
                                                                      , lon=centre_coords['lon'])
                                     , zoom=14))

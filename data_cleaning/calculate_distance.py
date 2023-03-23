@@ -1,11 +1,9 @@
 import geopy.distance
 
-from data_gathering.get_centre import get_centre
-
-def get_coordinate_distance(x, query):
+def get_coordinate_distance(x, centre):
 
     coords1 = x
-    coords2 = get_centre(query)
+    coords2 = centre
 
     distance = geopy.distance.geodesic(coords1, coords2).m
 

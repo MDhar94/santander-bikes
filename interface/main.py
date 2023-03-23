@@ -1,11 +1,9 @@
+import geopy.distance
+
 from data_gathering.data_api import bikepoint_api
-from data_cleaning.calculate_distance import get_coordinate_distance
 from data_cleaning.clean_data import create_dataframe, clean_dataframe, add_df_columns
 
 from ml_logic.params import API_KEY
-
-# Predict walking times from coords to bikepoint of choice?
-# Predict likelihood of getting a bike given time of day, day, bikepoint, etc.?
 
 def clean_pipeline():
 
@@ -20,24 +18,24 @@ def clean_pipeline():
 
     return df_clean
 
-def ten_nearest_bikes(query):
+def ten_nearest_bikes(dataframe,centre):
 
-    query = query
-    df = clean_pipeline()
+    closest_docks_df = dataframe.copy()
 
-    user_df = df.copy()
+    closest_docks_df['distance'] = closest_docks_df.apply(lambda row: int(round(geopy.distance.geodesic(row['coords']
+                                                                                            ,centre).m
+                                                                            ,1))
+                                                        , axis=1)
 
-    user_df['distance'] = df['coords'].apply(get_coordinate_distance, query=query)
-    user_df.sort_values(by='distance',ascending=True, inplace=True)
+    closest_docks_df.sort_values(by='distance',ascending=True, inplace=True)
 
-    closest_top10 = user_df.head(10)[['Name','distance','number_bikes','number_docks']]
-    closest_top10.reset_index(inplace=True,drop=True)
+    closest_top5 = closest_docks_df.head(5)[['Name','distance','number_bikes','number_docks']]
+    closest_top5.reset_index(inplace=True,drop=True)
 
-    return closest_top10
-
+    return closest_top5
 
 if __name__ == '__main__':
 
     df_clean = clean_pipeline()
 
-    print(df_clean.head())
+    df_ten_nearest_bikes = ten_nearest_bikes(df_clean)
