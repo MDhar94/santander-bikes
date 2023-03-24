@@ -67,12 +67,12 @@ def add_df_columns(dataframe):
     # % bikes available
     dataframe['bike_availability'] = round(
         (dataframe['number_bikes'] / dataframe['number_docks']
-         ) *100, 0)
+         ), 2)
 
     # % ebikes available
     dataframe['ebike_availability'] = round(
         (dataframe['number_ebikes'] / dataframe['number_docks']
-         ) *100, 0)
+         ), 2)
 
     # Grouped coords
     dataframe['coords'] = dataframe.apply(lambda x: tuple((x['lat'], x['lon'])), axis=1)
